@@ -4,16 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DOMADGARAGE — Rezervácia termínu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0c0e12;
-      --card: #151921;
-      --card-2: #1c222d;
-      --text: #f3f5f8;
-      --muted: #9aa3b2;
-      --line: #28303d;
-      --accent: #e11d48;
-      --accent-hover: #be123c;
+      --bg: #050608;
+      --card: rgba(10, 12, 16, 0.42);
+      --card-2: rgba(16, 19, 25, 0.48);
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --line: rgba(255, 255, 255, 0.18);
+      --line-strong: rgba(255, 255, 255, 0.28);
+      --accent: #dc2626;
+      --accent-hover: #ef4444;
       --ok: #16a34a;
       --err: #ef4444;
     }
@@ -22,39 +26,71 @@
 
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: radial-gradient(circle at top, #1b2230 0%, var(--bg) 60%);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 24px 14px;
+      padding: 26px 14px 48px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Tapeta z repozitára (bg.jpg) — mierne stmavená */
+    .bg-photo {
+      position: fixed;
+      inset: 0;
+      background: url("./bg.jpg") center center / cover no-repeat;
+      filter: brightness(0.46) contrast(1.1) saturate(0.85);
+      z-index: -2;
+    }
+
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(5, 6, 8, 0.38) 0%,
+        rgba(5, 6, 8, 0.52) 55%,
+        rgba(5, 6, 8, 0.68) 100%
+      );
+      z-index: -1;
     }
 
     .wrap {
-      max-width: 640px;
+      max-width: 660px;
       margin: 0 auto;
     }
 
     .brand {
-      margin-bottom: 18px;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--accent);
+      padding-left: 14px;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
     }
 
     .tag {
       display: inline-block;
-      font-size: 12px;
-      letter-spacing: 0.08em;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: #fda4af;
-      background: rgba(225, 29, 72, 0.14);
-      border: 1px solid rgba(225, 29, 72, 0.35);
-      padding: 4px 10px;
-      border-radius: 999px;
-      margin-bottom: 10px;
+      color: #fca5a5;
+      background: rgba(220, 38, 38, 0.28);
+      border: 1px solid rgba(220, 38, 38, 0.65);
+      padding: 3px 9px;
+      border-radius: 2px;
+      margin-bottom: 8px;
     }
 
     h1 {
       margin: 0 0 6px;
-      font-size: 28px;
-      letter-spacing: 0.02em;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.05;
     }
 
     .sub {
@@ -66,10 +102,13 @@
 
     form {
       background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 16px;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border: 1px solid var(--line-strong);
+      border-top: 3px solid var(--accent);
+      border-radius: 4px;
       padding: 20px;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
     }
 
     .grid {
@@ -84,10 +123,26 @@
 
     label {
       display: block;
-      font-size: 13px;
-      color: #d6dce6;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #f1f5f9;
       margin-bottom: 6px;
-      font-weight: 500;
+      font-weight: 600;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+    }
+
+    .hint {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      text-transform: none;
+      letter-spacing: 0;
+      color: #cbd5e1;
+      margin-top: 4px;
+      font-weight: 400;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
     }
 
     input, select, textarea {
@@ -95,15 +150,21 @@
       background: var(--card-2);
       color: var(--text);
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 3px;
       padding: 11px 12px;
-      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14.5px;
       outline: none;
-      transition: border-color 0.15s ease;
+      transition: border-color 0.14s ease, background 0.14s ease;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: rgba(226, 232, 240, 0.62);
     }
 
     input:focus, select:focus, textarea:focus {
-      border-color: var(--accent);
+      border-color: var(--accent-hover);
+      background: rgba(22, 26, 34, 0.72);
     }
 
     textarea {
@@ -118,72 +179,141 @@
       pointer-events: none;
     }
 
-    button {
-      margin-top: 16px;
+    /* Tlačidlo v tvare pružiny z auta */
+    .spring-wrap {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spring-btn {
+      position: relative;
       width: 100%;
-      background: var(--accent);
-      color: #fff;
+      max-width: 440px;
+      height: 82px;
+      padding: 0 18px;
+      background: transparent;
       border: 0;
-      border-radius: 11px;
-      padding: 13px 16px;
-      font-size: 15px;
-      font-weight: 600;
       cursor: pointer;
-      transition: background 0.15s ease, opacity 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.14s ease, filter 0.18s ease, opacity 0.18s ease;
     }
 
-    button:hover:not(:disabled) {
-      background: var(--accent-hover);
+    .spring-btn svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.75));
     }
 
-    button:disabled {
-      opacity: 0.6;
+    .spring-label {
+      position: relative;
+      z-index: 2;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #ffffff;
+      background: rgba(12, 14, 18, 0.78);
+      border: 1px solid rgba(248, 113, 113, 0.65);
+      padding: 6px 16px;
+      border-radius: 3px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
+      pointer-events: none;
+    }
+
+    .spring-btn:not(:disabled):hover {
+      transform: scaleY(0.95) scaleX(1.01);
+      filter: brightness(1.12);
+    }
+
+    .spring-btn:not(:disabled):active {
+      transform: scaleY(0.88) scaleX(1.02);
+    }
+
+    .spring-btn:disabled {
+      opacity: 0.42;
+      filter: grayscale(0.75);
       cursor: not-allowed;
     }
 
+    .req-status {
+      font-size: 12px;
+      color: #fca5a5;
+      text-align: center;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.95);
+    }
+
+    .req-status.ready {
+      color: #86efac;
+    }
+
     .msg {
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      font-size: 14px;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 3px;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
       display: none;
     }
 
     .msg.ok {
       display: block;
-      background: rgba(22, 163, 74, 0.15);
-      border: 1px solid rgba(22, 163, 74, 0.45);
-      color: #86efac;
+      background: rgba(22, 163, 74, 0.28);
+      border: 1px solid rgba(74, 222, 128, 0.65);
+      color: #dcfce7;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
     }
 
     .msg.err {
       display: block;
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.45);
-      color: #fca5a5;
+      background: rgba(220, 38, 38, 0.28);
+      border: 1px solid rgba(248, 113, 113, 0.65);
+      color: #fecaca;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
     }
 
     @media (max-width: 560px) {
       .grid {
         grid-template-columns: 1fr;
       }
+      h1 {
+        font-size: 27px;
+      }
+      .spring-btn {
+        height: 74px;
+      }
+      .spring-label {
+        font-size: 15px;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="bg-photo" aria-hidden="true"></div>
+  <div class="bg-overlay" aria-hidden="true"></div>
+
   <div class="wrap">
     <div class="brand">
-      <div class="tag">Rezervačný systém</div>
+      <div class="tag">DOMADGARAGE // REZERVÁCIE</div>
       <h1>DOMADGARAGE</h1>
-      <p class="sub">Vyber službu, navrhni termín a napíš údaje o aute. Po odoslaní sa ti ozvem s potvrdením času.</p>
+      <p class="sub">Vyber robotu alebo dopíš, čo treba spraviť na aute, navrhni termín a pošli žiadosť.</p>
     </div>
 
     <form id="bookingForm">
       <div class="grid">
         <div class="full">
-          <label for="service">Služba / typ práce *</label>
+          <label for="service">Druh opravy / služba *</label>
           <select id="service" name="service" required>
-            <option value="" disabled selected>-- Vyber službu --</option>
+            <option value="" disabled selected>-- Vyber druh opravy --</option>
             <option value="Výmena túrb">Výmena túrb</option>
             <option value="Autodiagnostika">Autodiagnostika</option>
             <option value="Výmena bŕzd">Výmena bŕzd (kotúče, platničky, strmene)</option>
@@ -196,6 +326,12 @@
             <option value="Príprava na STK / EK">Príprava na STK / EK</option>
             <option value="Iný servis / zákazka podľa dohody">Iný servis / zákazka podľa dohody</option>
           </select>
+        </div>
+
+        <div class="full">
+          <label for="other_repair">Iné opravy (ak tu niečo nie je v ponuke)</label>
+          <input type="text" id="other_repair" name="other_repair" placeholder="Napr. únik oleja, podvozok, zvar na karosérii, úprava..." />
+          <span class="hint">Ak vyberieš "Iný servis / zákazka podľa dohody" alebo ti chýba položka vyššie, napíš sem druh opravy.</span>
         </div>
 
         <div>
@@ -222,7 +358,7 @@
         </div>
 
         <div>
-          <label for="phone">Telefón *</label>
+          <label for="phone">Telefónne číslo *</label>
           <input type="tel" id="phone" name="phone" placeholder="+421 9xx xxx xxx" required />
         </div>
 
@@ -232,7 +368,7 @@
         </div>
 
         <div>
-          <label for="vehicle">Značka, model a motor *</label>
+          <label for="vehicle">Auto (značka, model a motor) *</label>
           <input type="text" id="vehicle" name="vehicle" placeholder="Napr. BMW E46 320d 110 kW" required />
         </div>
 
@@ -242,14 +378,43 @@
         </div>
 
         <div class="full">
-          <label for="note">Popis závady / požiadavky</label>
-          <textarea id="note" name="note" placeholder="Čo klepe, dymí, tečie alebo akú úpravu/servis potrebuješ..."></textarea>
+          <label for="note">Popis *</label>
+          <textarea id="note" name="note" placeholder="Napíš podrobnejší popis závady alebo požiadavky..." required></textarea>
         </div>
       </div>
 
       <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" />
 
-      <button type="submit" id="submitBtn">Odoslať žiadosť o termín</button>
+      <div class="spring-wrap">
+        <button type="submit" id="submitBtn" class="spring-btn" disabled aria-disabled="true">
+          <svg viewBox="0 0 440 82" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="coilGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#f87171" />
+                <stop offset="35%" stop-color="#dc2626" />
+                <stop offset="75%" stop-color="#7f1d1d" />
+                <stop offset="100%" stop-color="#450a0a" />
+              </linearGradient>
+              <linearGradient id="coilHighlight" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#991b1b" />
+                <stop offset="50%" stop-color="#fca5a5" />
+                <stop offset="100%" stop-color="#991b1b" />
+              </linearGradient>
+            </defs>
+            <!-- Koncové platne pružiny -->
+            <rect x="6" y="10" width="14" height="62" rx="3" fill="#334155" stroke="#94a3b8" stroke-width="2" />
+            <rect x="420" y="10" width="14" height="62" rx="3" fill="#334155" stroke="#94a3b8" stroke-width="2" />
+            <!-- Závity pružiny -->
+            <path d="M 24 14 C 46 4, 62 78, 84 68 C 106 58, 122 4, 144 14 C 166 24, 182 78, 204 68 C 226 58, 242 4, 264 14 C 286 24, 302 78, 324 68 C 346 58, 362 4, 384 14 C 398 20, 408 42, 416 68"
+                  fill="none" stroke="url(#coilGrad)" stroke-width="13" stroke-linecap="round" />
+            <path d="M 24 14 C 46 4, 62 78, 84 68 C 106 58, 122 4, 144 14 C 166 24, 182 78, 204 68 C 226 58, 242 4, 264 14 C 286 24, 302 78, 324 68 C 346 58, 362 4, 384 14 C 398 20, 408 42, 416 68"
+                  fill="none" stroke="url(#coilHighlight)" stroke-width="3" stroke-linecap="round" opacity="0.65" />
+          </svg>
+          <span class="spring-label" id="btnText">OBJEDNAŤ SA</span>
+        </button>
+        <div id="reqStatus" class="req-status"></div>
+      </div>
+
       <div id="msg" class="msg"></div>
     </form>
   </div>
@@ -257,17 +422,80 @@
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    const SUPABASE_URL = "https://ijeakszzdsixyueqfdj.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_PSviYvSVJXzi7YG1uPyQ-A_TdhME8MH";
+    const SUPABASE_URL = "https://ijeakszzdsixyueqfdj.supabase.co";[cite: 5, 6]
+    const SUPABASE_ANON_KEY = "sb_publishable_PSviYvSVJXzi7YG1uPyQ-A_TdhME8MH";[cite: 6, 8]
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const form = document.getElementById("bookingForm");
     const btn = document.getElementById("submitBtn");
+    const btnText = document.getElementById("btnText");
+    const reqStatus = document.getElementById("reqStatus");
     const msg = document.getElementById("msg");
     const dateInput = document.getElementById("preferred_date");
+    const serviceInput = document.getElementById("service");
+    const otherRepairInput = document.getElementById("other_repair");
+    const phoneInput = document.getElementById("phone");
+    const vehicleInput = document.getElementById("vehicle");
+    const noteInput = document.getElementById("note");
 
     const today = new Date().toISOString().split("T")[0];
     dateInput.min = today;
+
+    let isSubmitting = false;
+
+    function getMissingFields() {
+      const missing = [];
+      const hasService = Boolean(serviceInput.value.trim());
+      const hasOther = Boolean(otherRepairInput.value.trim());
+
+      if (!hasService && !hasOther) {
+        missing.push("druh opravy alebo iné opravy");
+      }
+      if (!vehicleInput.value.trim()) {
+        missing.push("auto");
+      }
+      if (!phoneInput.value.trim()) {
+        missing.push("telefónne číslo");
+      }
+      if (!noteInput.value.trim()) {
+        missing.push("popis");
+      }
+      if (!dateInput.value || dateInput.value < today) {
+        missing.push("platný dátum");
+      }
+      return missing;
+    }
+
+    function updateButtonState() {
+      if (isSubmitting) {
+        btn.disabled = true;
+        btn.setAttribute("aria-disabled", "true");
+        btnText.textContent = "ODOSIELAM...";
+        return;
+      }
+
+      const missing = getMissingFields();
+      const ready = missing.length === 0;
+
+      btn.disabled = !ready;
+      btn.setAttribute("aria-disabled", String(!ready));
+      btnText.textContent = "OBJEDNAŤ SA";
+
+      if (ready) {
+        reqStatus.textContent = "Všetko potrebné je vyplnené, môžeš sa objednať.";
+        reqStatus.className = "req-status ready";
+      } else {
+        reqStatus.textContent = "Doplň ešte: " + missing.join(", ");
+        reqStatus.className = "req-status";
+      }
+    }
+
+    [serviceInput, otherRepairInput, phoneInput, vehicleInput, noteInput, dateInput].forEach((el) => {
+      el.addEventListener("input", updateButtonState);
+      el.addEventListener("change", updateButtonState);
+    });
+
+    updateButtonState();
 
     function showMsg(type, text) {
       msg.className = "msg " + type;
@@ -278,49 +506,62 @@
       e.preventDefault();
       msg.className = "msg";
 
+      const missing = getMissingFields();
+      if (missing.length > 0) {
+        updateButtonState();
+        showMsg("err", "Najprv vyplň: " + missing.join(", ") + ".");
+        return;
+      }
+
       const data = new FormData(form);
 
       if (data.get("website")) {
-        showMsg("ok", "Žiadosť o termín bola odoslaná. Ozvem sa ti čo najskôr.");
+        showMsg("ok", "Ďakujem za objednávku, vaša DOMADGARAGE");
         form.reset();
+        dateInput.min = today;
+        updateButtonState();
         return;
       }
 
-      const preferredDate = String(data.get("preferred_date") || "");
-      if (!preferredDate || preferredDate < today) {
-        showMsg("err", "Vyber platný dátum (nie v minulosti).");
-        return;
-      }
+      isSubmitting = true;
+      updateButtonState();
 
-      btn.disabled = true;
-      btn.textContent = "Odosielam...";
+      const chosenService = String(data.get("service") || "").trim();
+      const otherRepair = String(data.get("other_repair") || "").trim();
+      const finalService = chosenService || (otherRepair ? `Iné: ${otherRepair}` : "Iný servis / zákazka podľa dohody");
+      const baseNote = String(data.get("note") || "").trim();
+      const combinedNote = [
+        otherRepair ? `Iné opravy: ${otherRepair}` : "",
+        baseNote
+      ].filter(Boolean).join("\n\n") || null;
 
       const payload = {
-        service: String(data.get("service") || "").trim(),
-        preferred_date: preferredDate,
+        service: finalService,
+        preferred_date: String(data.get("preferred_date") || ""),
         preferred_time: String(data.get("preferred_time") || "").trim(),
-        customer_name: String(data.get("customer_name") || "").trim(),
+        customer_name: String(data.get("customer_name") || "").trim() || "Neuvedené",
         phone: String(data.get("phone") || "").trim(),
         email: String(data.get("email") || "").trim() || null,
         vehicle: String(data.get("vehicle") || "").trim(),
         license_plate: String(data.get("license_plate") || "").trim().toUpperCase() || null,
-        note: String(data.get("note") || "").trim() || null
+        note: combinedNote
       };
 
       const { error } = await supabase.from("reservations").insert([payload]);
 
-      btn.disabled = false;
-      btn.textContent = "Odoslať žiadosť o termín";
+      isSubmitting = false;
 
       if (error) {
-        showMsg("err", "Nepodarilo sa odoslať rezerváciu. Skontroluj údaje alebo skús znova.");
+        updateButtonState();
+        showMsg("err", "Nepodarilo sa odoslať objednávku. Skontroluj údaje alebo skús znova.");
         console.error(error);
         return;
       }
 
-      showMsg("ok", "Objednávka prijatá! Ozvem sa ti a potvrdíme si presný termín.");
       form.reset();
       dateInput.min = today;
+      updateButtonState();
+      showMsg("ok", "Ďakujem za objednávku, vaša DOMADGARAGE");
     });
   </script>
 </body>
