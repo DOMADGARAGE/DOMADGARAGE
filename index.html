@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DOMADGARAGE — Rezervácia termínu</title>
+  <style>
+    :root {
+      --bg: #0c0e12;
+      --card: #151921;
+      --card-2: #1c222d;
+      --text: #f3f5f8;
+      --muted: #9aa3b2;
+      --line: #28303d;
+      --accent: #e11d48;
+      --accent-hover: #be123c;
+      --ok: #16a34a;
+      --err: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(circle at top, #1b2230 0%, var(--bg) 60%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 14px;
+    }
+
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      margin-bottom: 18px;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fda4af;
+      background: rgba(225, 29, 72, 0.14);
+      border: 1px solid rgba(225, 29, 72, 0.35);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+      letter-spacing: 0.02em;
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    form {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #d6dce6;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--card-2);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .hp {
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    button {
+      margin-top: 16px;
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: 0;
+      border-radius: 11px;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .msg {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .msg.ok {
+      display: block;
+      background: rgba(22, 163, 74, 0.15);
+      border: 1px solid rgba(22, 163, 74, 0.45);
+      color: #86efac;
+    }
+
+    .msg.err {
+      display: block;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+    }
+
+    @media (max-width: 560px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <div class="tag">Rezervačný systém</div>
+      <h1>DOMADGARAGE</h1>
+      <p class="sub">Vyber službu, navrhni termín a napíš údaje o aute. Po odoslaní sa ti ozvem s potvrdením času.</p>
+    </div>
+
+    <form id="bookingForm">
+      <div class="grid">
+        <div class="full">
+          <label for="service">Služba / typ práce *</label>
+          <select id="service" name="service" required>
+            <option value="" disabled selected>-- Vyber službu --</option>
+            <option value="Výmena túrb">Výmena túrb</option>
+            <option value="Autodiagnostika">Autodiagnostika</option>
+            <option value="Výmena bŕzd">Výmena bŕzd (kotúče, platničky, strmene)</option>
+            <option value="Výmena komplet olejov a filtrov">Výmena komplet olejov a filtrov</option>
+            <option value="Zváranie / výroba / úprava výfukov">Zváranie / výroba / úprava výfukov</option>
+            <option value="Výmena tlmičov a pružín">Výmena tlmičov a pružín</option>
+            <option value="Oprava náprav a uložení">Oprava náprav a uložení (ramená, čapy, silentbloky)</option>
+            <option value="Výmena poloosí, manžiet a kĺbov">Výmena poloosí, manžiet a kĺbov</option>
+            <option value="Spojka / zotrvačník / rozvody">Spojka / zotrvačník / rozvody</option>
+            <option value="Príprava na STK / EK">Príprava na STK / EK</option>
+            <option value="Iný servis / zákazka podľa dohody">Iný servis / zákazka podľa dohody</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="preferred_date">Preferovaný dátum *</label>
+          <input type="date" id="preferred_date" name="preferred_date" required />
+        </div>
+
+        <div>
+          <label for="preferred_time">Preferovaný čas *</label>
+          <select id="preferred_time" name="preferred_time" required>
+            <option value="Ráno / doobeda">Ráno / doobeda</option>
+            <option value="Poobede">Poobede</option>
+            <option value="08:00">08:00</option>
+            <option value="10:00">10:00</option>
+            <option value="13:00">13:00</option>
+            <option value="15:00">15:00</option>
+            <option value="17:00">17:00</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="customer_name">Meno a priezvisko *</label>
+          <input type="text" id="customer_name" name="customer_name" placeholder="Napr. Jozef Kováč" required />
+        </div>
+
+        <div>
+          <label for="phone">Telefón *</label>
+          <input type="tel" id="phone" name="phone" placeholder="+421 9xx xxx xxx" required />
+        </div>
+
+        <div class="full">
+          <label for="email">E-mail (nepovinné)</label>
+          <input type="email" id="email" name="email" placeholder="napr. meno@domena.sk" />
+        </div>
+
+        <div>
+          <label for="vehicle">Značka, model a motor *</label>
+          <input type="text" id="vehicle" name="vehicle" placeholder="Napr. BMW E46 320d 110 kW" required />
+        </div>
+
+        <div>
+          <label for="license_plate">ŠPZ / EČV (nepovinné)</label>
+          <input type="text" id="license_plate" name="license_plate" placeholder="Napr. SP000AA" />
+        </div>
+
+        <div class="full">
+          <label for="note">Popis závady / požiadavky</label>
+          <textarea id="note" name="note" placeholder="Čo klepe, dymí, tečie alebo akú úpravu/servis potrebuješ..."></textarea>
+        </div>
+      </div>
+
+      <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" />
+
+      <button type="submit" id="submitBtn">Odoslať žiadosť o termín</button>
+      <div id="msg" class="msg"></div>
+    </form>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "https://ijeakszzdsixyueqfdj.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_PSviYvSVJXzi7YG1uPyQ-A_TdhME8MH";
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const form = document.getElementById("bookingForm");
+    const btn = document.getElementById("submitBtn");
+    const msg = document.getElementById("msg");
+    const dateInput = document.getElementById("preferred_date");
+
+    const today = new Date().toISOString().split("T")[0];
+    dateInput.min = today;
+
+    function showMsg(type, text) {
+      msg.className = "msg " + type;
+      msg.textContent = text;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.className = "msg";
+
+      const data = new FormData(form);
+
+      if (data.get("website")) {
+        showMsg("ok", "Žiadosť o termín bola odoslaná. Ozvem sa ti čo najskôr.");
+        form.reset();
+        return;
+      }
+
+      const preferredDate = String(data.get("preferred_date") || "");
+      if (!preferredDate || preferredDate < today) {
+        showMsg("err", "Vyber platný dátum (nie v minulosti).");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Odosielam...";
+
+      const payload = {
+        service: String(data.get("service") || "").trim(),
+        preferred_date: preferredDate,
+        preferred_time: String(data.get("preferred_time") || "").trim(),
+        customer_name: String(data.get("customer_name") || "").trim(),
+        phone: String(data.get("phone") || "").trim(),
+        email: String(data.get("email") || "").trim() || null,
+        vehicle: String(data.get("vehicle") || "").trim(),
+        license_plate: String(data.get("license_plate") || "").trim().toUpperCase() || null,
+        note: String(data.get("note") || "").trim() || null
+      };
+
+      const { error } = await supabase.from("reservations").insert([payload]);
+
+      btn.disabled = false;
+      btn.textContent = "Odoslať žiadosť o termín";
+
+      if (error) {
+        showMsg("err", "Nepodarilo sa odoslať rezerváciu. Skontroluj údaje alebo skús znova.");
+        console.error(error);
+        return;
+      }
+
+      showMsg("ok", "Objednávka prijatá! Ozvem sa ti a potvrdíme si presný termín.");
+      form.reset();
+      dateInput.min = today;
+    });
+  </script>
+</body>
+</html>
